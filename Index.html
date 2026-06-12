@@ -1,0 +1,470 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kejutan Spesial | Renda Anggrahini</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Variabel Warna Premium */
+        :root {
+            --text-dark: #2d1b33;
+            --text-light: #594a5e;
+            --accent-gold: #d4af37;
+            --accent-rose: #e6a8d7;
+            --bg-glass: rgba(255, 255, 255, 0.45);
+            --border-glass: rgba(255, 255, 255, 0.7);
+            --shadow-glass: 0 10px 40px 0 rgba(132, 94, 152, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #fdfbfb;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Latar Belakang Gradasi Animasi --- */
+        .background {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%); overflow: hidden;
+        }
+
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; animation: floatOrb 20s infinite alternate ease-in-out; }
+        .orb:nth-child(1) { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #fbc2eb; animation-delay: 0s; }
+        .orb:nth-child(2) { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: #a18cd1; animation-delay: -5s; }
+        .orb:nth-child(3) { top: 40%; left: 60%; width: 40vw; height: 40vw; background: #ffecd2; animation-delay: -10s; }
+
+        /* --- Layout Utama --- */
+        main { max-width: 500px; margin: 0 auto; position: relative; z-index: 1; padding-bottom: 50px; }
+        section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 25px; text-align: center; }
+        .content-section { min-height: auto; padding: 30px 25px; margin-bottom: 20px; }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; color: var(--text-dark); }
+        .italic-serif { font-style: italic; color: var(--accent-rose); }
+
+        .reveal { opacity: 0; transform: translateY(50px); filter: blur(8px); transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+        /* --- Hero Section --- */
+        .hero-subtitle { font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; color: var(--text-light); margin-bottom: 15px; font-weight: 500; }
+        .hero-title { font-size: 3.5rem; line-height: 1.1; margin-bottom: 20px; }
+        .scroll-down { position: absolute; bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 10px; color: var(--text-light); font-size: 0.85rem; letter-spacing: 1px; opacity: 0.7; animation: pulseFade 2s infinite; }
+        .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--text-light), transparent); }
+
+        /* --- Glass Cards --- */
+        .glass-panel {
+            background: var(--bg-glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass); box-shadow: var(--shadow-glass);
+            border-radius: 30px; padding: 45px 30px; width: 100%; position: relative; overflow: hidden; text-align: left;
+        }
+        .glass-panel::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, transparent 50%, rgba(255,255,255,0.2) 100%);
+            z-index: -1; pointer-events: none;
+        }
+        .glass-panel h2 { font-size: 2rem; margin-bottom: 20px; line-height: 1.2; text-align: center; }
+        .glass-panel p { font-size: 1.05rem; line-height: 1.8; color: var(--text-light); margin-bottom: 20px; }
+        .card-icon { font-size: 2rem; text-align: center; margin-bottom: 15px; }
+
+        /* --- Frame Foto --- */
+        .photo-wrapper {
+            width: 160px;
+            height: 160px;
+            margin: 10px auto 30px auto;
+            border-radius: 20px;
+            padding: 8px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.5));
+            box-shadow: 0 15px 30px rgba(161, 140, 209, 0.3);
+            border: 1px solid rgba(255,255,255,0.9);
+            transform: rotate(-4deg);
+            transition: transform 0.4s ease;
+        }
+        .photo-wrapper:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+        .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        /* =========================================
+           WHEEL OF FORTUNE (ROULETTE) CSS
+           ========================================= */
+        #game { min-height: 85vh; padding-top: 50px; }
+        .roulette-wrapper { position: relative; width: 300px; height: 300px; margin: 40px auto; }
+        
+        .pointer {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 40px; height: 50px; z-index: 10; background-color: var(--text-dark);
+            clip-path: polygon(50% 100%, 0 0, 100% 0); filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+        }
+
+        .wheel {
+            width: 100%; height: 100%; border-radius: 50%; position: relative; overflow: hidden;
+            border: 8px solid white; box-shadow: 0 10px 30px rgba(132, 94, 152, 0.3);
+            transition: transform 4s cubic-bezier(0.1, 0.9, 0.2, 1);
+            background: conic-gradient(from -90deg,
+                #ffffff 0deg 45deg,      #fbcfe8 45deg 90deg,     
+                #f3e8ff 90deg 135deg,    #e9d5ff 135deg 180deg,   
+                #ffffff 180deg 225deg,   #fbcfe8 225deg 270deg,   
+                #f3e8ff 270deg 315deg,   #e9d5ff 315deg 360deg    
+            );
+        }
+
+        .wheel::after {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 40px; height: 40px; background: white; border-radius: 50%; border: 4px solid var(--accent-gold);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 5;
+        }
+
+        .wheel-texts span {
+            position: absolute; top: 50%; left: 50%; transform-origin: 0 50%;
+            transform: translateY(-50%) rotate(calc(var(--i) * 45deg + 22.5deg));
+            width: 140px; text-align: right; padding-right: 20px;
+            font-size: 13px; font-weight: 700; color: #4c1d95; text-transform: uppercase;
+        }
+
+        .wheel-texts span.highlight {
+            font-size: 14px; color: #d4af37; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .btn-spin {
+            background: linear-gradient(135deg, #a855f7, #7e22ce); color: white;
+            border: none; padding: 15px 40px; font-size: 1.1rem; font-family: 'Outfit', sans-serif;
+            font-weight: 600; border-radius: 30px; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(126, 34, 206, 0.3); transition: all 0.3s ease;
+            position: relative; z-index: 10;
+        }
+        .btn-spin:active { transform: scale(0.95); }
+        .btn-spin:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; transform: none; }
+
+        /* --- Modal Custom --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(45, 27, 51, 0.6); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        
+        .modal-content {
+            background: white; width: 85%; max-width: 400px; padding: 40px 30px;
+            border-radius: 30px; text-align: center; transform: translateY(30px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            position: relative; z-index: 105;
+        }
+        .modal-overlay.show .modal-content { transform: translateY(0); }
+        
+        .modal-content h3 { font-size: 2rem; margin-bottom: 5px; color: var(--text-dark); margin-top: 0;}
+        .modal-content p { font-size: 1.05rem; color: var(--text-light); margin-bottom: 10px; line-height: 1.6; }
+        
+        .btn-modal {
+            background: #e2e8f0; color: var(--text-dark); border: none; padding: 12px 25px;
+            font-size: 1rem; border-radius: 20px; cursor: pointer; font-family: 'Outfit', sans-serif; font-weight: 600;
+            width: 100%; max-width: 250px; position: relative; z-index: 110;
+        }
+        
+        .btn-prize-minor {
+            background: linear-gradient(135deg, #fbcfe8, #f472b6); color: white;
+            text-decoration: none; padding: 12px 25px; border-radius: 30px;
+            font-weight: 600; font-size: 1rem; box-shadow: 0 5px 15px rgba(244, 114, 182, 0.3);
+            width: 100%; max-width: 250px; display: inline-block; cursor: pointer; position: relative; z-index: 110;
+        }
+
+        .btn-prize-major {
+            background: linear-gradient(135deg, #d4af37, #f59e0b); color: white;
+            text-decoration: none; padding: 15px 35px; border-radius: 30px;
+            font-weight: 700; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); 
+            animation: pulseFade 2s infinite; width: 100%; max-width: 280px; display: inline-block; cursor: pointer; position: relative; z-index: 110;
+        }
+
+        footer { padding: 20px; text-align: center; font-size: 0.8rem; color: #9a8a9e; margin-top: 20px; }
+
+        @keyframes floatOrb { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, -50px) scale(1.1); } }
+        @keyframes pulseFade { 0%, 100% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+    </style>
+</head>
+<body>
+
+    <div class="background">
+        <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+    </div>
+
+    <!-- MODAL POPUP UNTUK HASIL SPIN -->
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Judul</h3>
+            <p id="modal-desc">Deskripsi</p>
+            
+            <!-- TOMBOL HADIAH HIBURAN (Rp500) -->
+            <!-- Memakai window.location.href agar lebih mulus saat membuka app DANA di HP -->
+            <button class="btn-prize-minor" id="modal-btn-minor" style="display: none; border: none;" onclick="window.location.href='https://m.dana.id/n/link/danakaget?c=s8lk4qu8s&r=buRTPI&orderId=20260612101214727815010300166121382841818'">Ambil Rp500 🍬</button>
+            
+            <!-- TOMBOL LANJUT PUTAR -->
+            <button class="btn-modal" id="modal-btn-close" onclick="closeModal()">Lanjut</button>
+            
+            <!-- TOMBOL HADIAH UTAMA (Rp100.000) -->
+            <!-- Ganti #LINK_100K di bawah ini nanti kalau linknya sudah siap -->
+            <button class="btn-prize-major" id="modal-btn-major" style="display: none; border: none;" onclick="window.location.href='#LINK_100K'">Ambil Hadiah Utama! 🎁</button>
+        </div>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="reveal">
+            <div class="hero-subtitle">Teruntuk</div>
+            <h1 class="hero-title">Renda <br><span class="italic-serif">Anggrahini</span></h1>
+            <p style="color: var(--text-light); font-weight: 300;">Sebuah pesan kecil di hari spesialmu.</p>
+            <div class="scroll-down"><span>Gulir perlahan</span><div class="scroll-line"></div></div>
+        </section>
+
+        <!-- Card 1 -->
+        <section class="content-section reveal" id="wishes-1">
+            <div class="glass-panel">
+                <div class="card-icon">✨</div>
+                <h2>Sebuah <span class="italic-serif">Perjalanan...</span></h2>
+                <p>Waktu rasanya berlalu begitu cepat ya. Hari ini, kamu kembali menyapa tanggal yang sama, tapi dengan versi dirimu yang jauh lebih dewasa.</p>
+                <p>Melihatmu tumbuh, berjuang, dan bertahan melewati segala dinamika hidup adalah sebuah kebanggaan tersendiri. Terima kasih karena kamu <b>tidak pernah menyerah</b>.</p>
+            </div>
+        </section>
+
+        <!-- Card 2 -->
+        <section class="content-section reveal">
+            <div class="glass-panel">
+                <div class="card-icon">🤍</div>
+                <h2>Doa & <span class="italic-serif">Harapan</span></h2>
+                <p>Di lembaran usia yang baru ini, doaku sederhana. Semoga semesta selalu berpihak pada setiap langkah baikmu.</p>
+                <p>Semoga segala sedihmu segera tergantikan dengan tawa, lelahmu terbayar tuntas, dan <b>setiap mimpimu yang sempat tertunda</b> mulai menemukan jalannya untuk menjadi nyata.</p>
+            </div>
+        </section>
+
+        <!-- Card 3 -->
+        <section class="content-section reveal">
+            <div class="glass-panel">
+                <div class="card-icon">🌷</div>
+                <h2>Melangkah <span class="italic-serif">ke Depan</span></h2>
+                <p>Semoga kamu selalu dikelilingi orang-orang yang menyayangimu, diberikan kesehatan, rezeki yang tak disangka-sangka, dan yang terpenting: <b>kedamaian hati</b>.</p>
+                <p>Ingatlah bahwa kamu luar biasa dan kamu pantas untuk bahagia. <i>Selamat ulang tahun ya, Renda.</i></p>
+            </div>
+        </section>
+
+        <!-- Card 4 (Penyemangat + Foto Anak) -->
+        <section class="content-section reveal">
+            <div class="glass-panel">
+                <div class="card-icon">💫</div>
+                <h2 style="margin-bottom: 5px;">Sumber <span class="italic-serif">Kekuatan</span></h2>
+                
+                <!-- Wrapper Foto -->
+                <div class="photo-wrapper">
+                    <img src="https://ik.imagekit.io/l2g3yqoo4/IMG-20260608-WA0011.jpg" alt="Muhammad Yusuf Alfarizki">
+                </div>
+
+                <p>Dan satu pesan kecil untukmu...</p>
+                <p>Jika suatu saat langkahmu terasa berat dan semangatmu mulai memudar, ingatlah selalu ada senyum seorang anak kecil bernama <b>Muhammad Yusuf Alfarizki</b> yang selalu menjadikanmu sebagai seluruh dunianya.</p>
+            </div>
+        </section>
+
+        <!-- Section GAME ROULETTE -->
+        <section id="game" class="reveal">
+            <h3 style="font-size: 2rem; margin-bottom: 5px;">Satu Hal <span class="italic-serif">Terakhir...</span></h3>
+            <p style="color: var(--text-light); margin-bottom: 10px; font-size: 1.1rem;">
+                Aku punya hadiah rahasia. Tapi... kamu harus putar roda ini dulu!
+            </p>
+            <p id="chance-text" style="font-weight: 600; color: var(--accent-rose);">Kesempatan: 3</p>
+            
+            <div class="roulette-wrapper">
+                <div class="pointer"></div>
+                <div class="wheel" id="wheel">
+                    <div class="wheel-texts">
+                        <!-- Indeks Segment (0 s.d 7) -->
+                        <span style="--i:0;">Zonk</span>
+                        <span style="--i:1;">Hiburan</span>
+                        <span style="--i:2;">Coba Lagi</span>
+                        <span style="--i:3;" class="highlight">Utama 🎁</span>
+                        <span style="--i:4;">Hampir</span>
+                        <span style="--i:5;">Oops!</span>
+                        <span style="--i:6;">Zonk</span>
+                        <span style="--i:7;">Semangat</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-spin" id="btn-spin" onclick="startSpin()">Putar Roda</button>
+        </section>
+        
+        <footer>CRAFTED WITH ✨ BY @SAIPULISNAN.AI</footer>
+    </main>
+
+    <script>
+        // --- ANIMASI REVEAL SAAT SCROLL ---
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                if (elementTop < windowHeight - 80) {
+                    reveals[i].classList.add("active");
+                    if(reveals[i].id === 'wishes-1' && !reveals[i].classList.contains('confetti-fired')) {
+                        fireConfetti(); reveals[i].classList.add('confetti-fired');
+                    }
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        window.onload = () => { reveal(); setTimeout(() => { confetti({ particleCount: 60, spread: 80, origin: { y: 0.1 }, colors: ['#e6a8d7', '#d8b4e2', '#ffffff'] }); }, 800); };
+
+        function fireConfetti() {
+            var duration = 2.5 * 1000; var animationEnd = Date.now() + duration;
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                confetti({ particleCount: 15, origin: { x: Math.random() * (0.3 - 0.1) + 0.1, y: Math.random() - 0.2 }, colors: ['#a18cd1', '#fbc2eb', '#ffffff'] });
+                confetti({ particleCount: 15, origin: { x: Math.random() * (0.9 - 0.7) + 0.7, y: Math.random() - 0.2 }, colors: ['#a18cd1', '#fbc2eb', '#ffffff'] });
+            }, 250);
+        }
+
+        // --- LOGIKA SPIN THE WHEEL ---
+        let currentAttempt = 0;
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        const wheel = document.getElementById('wheel');
+        const btnSpin = document.getElementById('btn-spin');
+        const chanceText = document.getElementById('chance-text');
+        
+        // Modal Elements
+        const modal = document.getElementById('result-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const btnCloseModal = document.getElementById('modal-btn-close');
+        
+        // Link Hadiah
+        const btnMinorPrize = document.getElementById('modal-btn-minor');
+        const btnMajorPrize = document.getElementById('modal-btn-major');
+
+        function startSpin() {
+            if(isSpinning) return;
+            isSpinning = true;
+            btnSpin.disabled = true;
+
+            let targetIndex;
+
+            // Logika Settingan 3 Putaran:
+            if(currentAttempt === 0) {
+                targetIndex = 5; // Putaran 1: Berhenti di "Oops!"
+            } else if (currentAttempt === 1) {
+                targetIndex = 1; // Putaran 2: Berhenti di "Hiburan"
+            } else {
+                targetIndex = 3; // Putaran 3: Berhenti di "Utama 🎁"
+            }
+
+            // Menghitung rotasi CSS
+            let targetAngleRel = 270 - (targetIndex * 45 + 22.5);
+            if(targetAngleRel < 0) targetAngleRel += 360;
+
+            let remainder = currentRotation % 360;
+            let toAdd = targetAngleRel - remainder;
+            if(toAdd <= 0) toAdd += 360;
+
+            // Tambahkan 5 putaran penuh + sisa derajat
+            currentRotation += (360 * 5) + toAdd;
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            // Tunggu roda berhenti (4 detik sesuai transisi CSS)
+            setTimeout(() => {
+                showResult(currentAttempt);
+                currentAttempt++;
+                chanceText.innerText = `Kesempatan: ${3 - currentAttempt}`;
+                
+                isSpinning = false;
+                if(currentAttempt < 3) {
+                    btnSpin.disabled = false;
+                    btnSpin.innerText = `Putar Lagi (${3 - currentAttempt} Sisa)`;
+                } else {
+                    btnSpin.innerText = "Selesai!";
+                }
+            }, 4200);
+        }
+
+        function showResult(attempt) {
+            modal.classList.add('show');
+            
+            // Reset state tombol
+            btnMinorPrize.style.display = "none";
+            btnMajorPrize.style.display = "none";
+            btnCloseModal.style.display = "inline-block";
+            
+            if(attempt === 0) {
+                modalTitle.innerText = "Oops!";
+                modalTitle.style.color = "var(--text-dark)";
+                modalDesc.innerText = "Yah.. nyangkut di Oops. Belum dapat nih. Masih ada 2 kesempatan lagi kok, coba lagi ya pelan-pelan!";
+                btnCloseModal.innerText = "Coba Lagi";
+            } 
+            else if (attempt === 1) {
+                modalTitle.innerText = "Lumayan! 🍬";
+                modalTitle.style.color = "#a18cd1";
+                modalDesc.innerText = "Yeay! Kamu dapet Hadiah Hiburan Rp 500. Lumayan kan buat beli permen? Ambil dulu gih, abis itu putar lagi buat kejar hadiah utama!";
+                
+                btnMinorPrize.style.display = "inline-block";
+                btnCloseModal.innerText = "Lanjut Putar Terakhir";
+                
+                triggerSmallConfetti();
+            } 
+            else if (attempt === 2) {
+                modalTitle.innerText = "JACKPOT! 🎉";
+                modalTitle.style.color = "#d4af37";
+                
+                modalDesc.innerHTML = "Wahhh keren banget! Kamu berhasil menang <b>Hadiah Utama Rp 100.000!</b> Jangan lupa buat senengin diri sendiri ya ✨. Langsung aja ambil hadiahmu di bawah!";
+
+                btnCloseModal.style.display = "none";
+                btnMajorPrize.style.display = "inline-block";
+                
+                triggerMegaConfetti();
+            }
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+        }
+
+        function triggerSmallConfetti() {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#fbcfe8', '#a18cd1'] });
+        }
+
+        function triggerMegaConfetti() {
+            var end = Date.now() + (3.5 * 1000);
+            var colors = ['#d4af37', '#e6a8d7', '#ffffff', '#a18cd1'];
+            (function frame() {
+                confetti({ particleCount: 10, angle: 60, spread: 55, origin: { x: 0 }, colors: colors, zIndex: 1000 });
+                confetti({ particleCount: 10, angle: 120, spread: 55, origin: { x: 1 }, colors: colors, zIndex: 1000 });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+        }
+    </script>
+</body>
+</html>
+
+
+```
